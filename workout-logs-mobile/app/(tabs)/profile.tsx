@@ -1,8 +1,21 @@
 import { View, StyleSheet, ScrollView } from "react-native";
 import { Text, Card, List, Switch, Button } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "../context/AuthContext";
+import { router } from "expo-router";
 
 export default function Profile() {
+  const { user, logout } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await logout();
+      router.replace('/auth/login');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Text variant="headlineMedium" style={styles.title}>
@@ -13,8 +26,8 @@ export default function Profile() {
         <Card style={styles.card}>
           <Card.Content>
             <View style={styles.profileHeader}>
-              <Text variant="headlineSmall">John Doe</Text>
-              <Text variant="bodyMedium">john.doe@example.com</Text>
+              <Text variant="headlineSmall">{user?.username || 'User'}</Text>
+              <Text variant="bodyMedium">{user?.email || 'No email'}</Text>
             </View>
           </Card.Content>
         </Card>
@@ -66,7 +79,7 @@ export default function Profile() {
 
         <Button
           mode="outlined"
-          onPress={() => {}}
+          onPress={handleSignOut}
           style={styles.button}
           textColor="#ef4444">
           Sign Out
